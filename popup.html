@@ -53,16 +53,22 @@
       background-color: #ccc;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <h3>Absent Periods</h3>
   <form id="absentForm">
-    
-    <table id="output">
-      <tr><td>Loading...</td></tr>
+    <input type="text" id="name" placeholder="Name"><br>
+    <input type="text" id="sem" placeholder="Semester"><br>
+    <input type="text" id="regno" placeholder="Register Number"><br>
+    <button type="button" id="downloadPdfBtn">Download PDF</button>
+    <table>
+      <tbody id="output">
+        <tr><td colspan="4">Loading...</td></tr>
+      </tbody>
     </table>
     <button type="button" id="selectAll">Select All</button>
-    <button type="submit">Request Duty Leave </button>
+    <button type="submit">Request Duty Leave</button>
   </form>
   <script src="popup.js"></script>
 </body>

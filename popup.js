@@ -3,7 +3,7 @@ document.getElementById("selectAll").addEventListener("click", () => {
     checkboxes.forEach((cb) => {
       cb.checked = true;
     });
-  });
+});
   
 function extractAttendance() {
     const table = document.querySelector("#itsthetable");
@@ -42,9 +42,13 @@ function extractAttendance() {
     });
   
     return data;
-  }
+}
   
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs || tabs.length === 0) {
+        console.error("No active tabs found");
+        return;
+    }
     chrome.scripting.executeScript(
       {
         target: { tabId: tabs[0].id },
@@ -52,9 +56,20 @@ function extractAttendance() {
       },
       (results) => {
         const output = document.getElementById("output");
-        const data = results[0]?.result || [];
+        if (chrome.runtime.lastError) {
+          console.error("Script execution error:", chrome.runtime.lastError);
+          output.innerHTML = "<tr><td colspan='4'>Error fetching attendance data.</td></tr>";
+          return;
+        }
   
+        const data = results && results[0]?.result ? results[0].result : [];
         output.innerHTML = "";
+  
+        if (data.length === 0) {
+          output.innerHTML = "<tr><td colspan='4'>No attendance data found.</td></tr>";
+          return;
+        }
+  
         const header = document.createElement("tr");
         header.innerHTML = "<th>Select</th><th>Day</th><th>Period</th><th>Subject</th>";
         output.appendChild(header);
@@ -89,19 +104,18 @@ function extractAttendance() {
         }
       }
     );
-  });
+});
   
-  document.getElementById("absentForm").addEventListener("submit", (e) => {
+document.getElementById("absentForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const checkboxes = document.querySelectorAll("input[name='absent[]']:checked");
   
     if (checkboxes.length === 0) {
-      alert("No absent periods selected u dumb!");
+      alert("No absent periods selected. Please select at least one period.");
     } else {
       const selected = Array.from(checkboxes).map((cb) => cb.value);
       const grouped = {};
       selected.forEach((value) => {
-          // "xx jjj - 1 <sub>"
           const parts = value.split(" - ");
           if (parts.length >= 2) {
               const day = parts[0].trim();
@@ -118,6 +132,7 @@ function extractAttendance() {
       });
       
       const alertLines = [];
+      
       for (const day in grouped) {
           const periods = grouped[day].join(",");
           alertLines.push(`${day} : ${periods}`);
