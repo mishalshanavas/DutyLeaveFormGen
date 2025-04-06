@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Attendance Exporter",
+  "version": "1.0",
+  "description": "Select absent periods and export duty leave format.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png"
+    }
+  },
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"]
+}

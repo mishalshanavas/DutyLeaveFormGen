@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Duty Leave Helper</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 10px;
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      background-color: #f8f8f8;
+      color: #333;
+    }
+    h3 {
+      margin-bottom: 10px;
+      font-weight: normal;
+      font-size: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 5px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 0.9em;
+    }
+    th {
+      background-color: #e0e0e0;
+    }
+    input[type="checkbox"] {
+      transform: scale(0.9);
+    }
+    button {
+      margin-top: 8px;
+      padding: 5px;
+      width: auto;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      color: #333;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e0e0e0;
+    }
+    button:active {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h3>Absent Periods</h3>
+  <form id="absentForm">
+    
+    <table id="output">
+      <tr><td>Loading...</td></tr>
+    </table>
+    <button type="button" id="selectAll">Select All</button>
+    <button type="submit">Request Duty Leave </button>
+  </form>
+  <script src="popup.js"></script>
+</body>
+</html>
