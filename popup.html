@@ -35,6 +35,12 @@
     input[type="checkbox"] {
       transform: scale(0.9);
     }
+    input[type="text"] {
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 5px;
+      box-sizing: border-box;
+    }
     button {
       margin-top: 8px;
       padding: 5px;
@@ -52,23 +58,51 @@
     button:active {
       background-color: #ccc;
     }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .btn-group button {
+      flex: 1;
+      margin: 0 2px;
+    }
+    #pdfPreviewArea {
+      margin-top: 12px;
+      padding: 5px;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+  <!-- Reference local versions of the PDFLib scripts -->
+  <script src="lib/pdf-lib.min.js"></script>
+  <script src="lib/fontkit.umd.min.js"></script>
 </head>
 <body>
-  <h3>Absent Periods</h3>
+  <h3>Duty Leave Application</h3>
   <form id="absentForm">
-    <input type="text" id="name" placeholder="Name"><br>
-    <input type="text" id="sem" placeholder="Semester"><br>
-    <input type="text" id="regno" placeholder="Register Number"><br>
-    <button type="button" id="downloadPdfBtn">Download PDF</button>
+    <input type="text" id="program" placeholder="Program/Event Name" >
+    <input type="text" id="name" placeholder="Student Name" >
+    <input type="text" id="rollNo" placeholder="Roll Number" >
+    <input type="text" id="srNo" placeholder="SR Number" >
+    <input type="text" id="semester" placeholder="Semester" >
+    <input type="text" id="branch" placeholder="Branch" >
+    <input type="text" id="batch" placeholder="Batch" >
+
+    <h3>Absent Periods</h3>
     <table>
       <tbody id="output">
         <tr><td colspan="4">Loading...</td></tr>
       </tbody>
     </table>
-    <button type="button" id="selectAll">Select All</button>
-    <button type="submit">Request Duty Leave</button>
+    
+    <div class="btn-group">
+      <button type="button" id="selectAll">Select All</button>
+      <button type="button" id="downloadPdfBtn">Preview PDF</button>
+      <button type="submit">Selected dta</button>
+    </div>
+    <div id="pdfPreviewArea"></div>
   </form>
   <script src="popup.js"></script>
 </body>
