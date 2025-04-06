@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Attendance Exporter",
-  "version": "1.0",
-  "description": "Select absent periods and export duty leave format.",
+  "name": "Cook my DutyLeave",
+  "version": "1.1",
+  "description": "Select absent periods and export it in duty leave form format.",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
