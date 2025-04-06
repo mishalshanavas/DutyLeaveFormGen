@@ -56,9 +56,10 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             const output = document.getElementById("output");
             if (chrome.runtime.lastError) {
                 console.error("Script execution error:", chrome.runtime.lastError);
-                output.innerHTML = "<tr><td colspan='4'>Error fetching attendance data.</td></tr>";
+                output.innerHTML = "<tr><td colspan='4'>Error fetching attendance data. <a href=\"https://sahrdaya.etlab.in/ktuacademics/student/attendance\">Go to etlab</a> </td></tr>";
                 return;
             }
+            
 
             const data = results && results[0]?.result ? results[0].result : [];
             output.innerHTML = "";
@@ -181,13 +182,13 @@ async function fillAndPreviewPdf() {
         const branch = document.getElementById('branch').value;
         const batch = document.getElementById('batch').value;
         const month = document.getElementById('month').value;
-        firstPage.drawText(program, { x: 80, y: height - 109, size: 14, font: obliqueFont });
-        firstPage.drawText(studentName, { x: 88, y: height - 137, size: 14, font });
-        firstPage.drawText(rollNo, { x: 339, y: height - 137, size: 14, font });
-        firstPage.drawText(srNo, { x: 454, y: height - 137, size: 14, font });
-        firstPage.drawText(semester, { x: 100, y: height - 161, size: 14, font });
-        firstPage.drawText(branch, { x: 230, y: height - 161, size: 14, font });
-        firstPage.drawText(batch, { x: 330, y: height - 161, size: 14, font });
+        firstPage.drawText(program, { x: 80, y: height - 114, size: 14, font: obliqueFont });
+        firstPage.drawText(studentName, { x: 88, y: height - 142, size: 14, font });
+        firstPage.drawText(rollNo, { x: 339, y: height - 142, size: 14, font });
+        firstPage.drawText(srNo, { x: 454, y: height - 142, size: 14, font });
+        firstPage.drawText(semester, { x: 100, y: height - 166, size: 14, font });
+        firstPage.drawText(branch, { x: 230, y: height - 166, size: 14, font });
+        firstPage.drawText(batch, { x: 330, y: height - 166, size: 14, font });
         const checkboxes = document.querySelectorAll("input[name='absent[]']:checked");
         
         if (checkboxes.length === 0) {
@@ -215,7 +216,7 @@ async function fillAndPreviewPdf() {
               const periods = grouped[day].join(", ");                            //but it works
               alertLines.push(`${paddedDay} ${month}             ${periods}`);
           }
-            let ypos = height - 217;
+            let ypos = height - 222;
             const lineSpacing = 23; // line spacing
             alertLines.forEach(line => {
               firstPage.drawText(line, { x: 60, y: ypos, size: 12, font });
