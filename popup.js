@@ -114,6 +114,7 @@ document.getElementById("absentForm").addEventListener("submit", async (e) => {
     const semester = document.getElementById('semester').value.trim();
     const branch = document.getElementById('branch').value.trim();
     const batch = document.getElementById('batch').value.trim();
+    const month = document.getElementById('month').value.trim();
 
     if (checkboxes.length === 0) {
         alert("No absent periods selected. Select at least one period.");
@@ -136,8 +137,8 @@ document.getElementById("absentForm").addEventListener("submit", async (e) => {
 
         const alertLines = [];
         for (const day in grouped) {
-            const periods = grouped[day].join(",");
-            alertLines.push(`${day} : ${periods}`);
+            const periods = grouped[day].join(", ");
+            alertLines.push(`${day} ${month}: ${periods}`);
         }
         alert("Requesting duty leave for:\n" + alertLines.join("\n"));
     }
@@ -152,6 +153,7 @@ document.getElementById("downloadPdfBtn").addEventListener("click", async () => 
     const semester = document.getElementById('semester').value.trim();
     const branch = document.getElementById('branch').value.trim();
     const batch = document.getElementById('batch').value.trim();
+    const month = document.getElementById('month').value.trim();
 
     try {
         await fillAndPreviewPdf();
@@ -170,7 +172,7 @@ async function fillAndPreviewPdf() {
         const obliqueFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaOblique);
         const { width, height } = firstPage.getSize();
 
-        // Get  val
+        // Get values
         const program = document.getElementById('program').value;
         const studentName = document.getElementById('name').value;
         const rollNo = document.getElementById('rollNo').value;
@@ -178,6 +180,7 @@ async function fillAndPreviewPdf() {
         const semester = document.getElementById('semester').value;
         const branch = document.getElementById('branch').value;
         const batch = document.getElementById('batch').value;
+        const month = document.getElementById('month').value;
         firstPage.drawText(program, { x: 80, y: height - 109, size: 14, font: obliqueFont });
         firstPage.drawText(studentName, { x: 88, y: height - 137, size: 14, font });
         firstPage.drawText(rollNo, { x: 339, y: height - 137, size: 14, font });
@@ -185,6 +188,40 @@ async function fillAndPreviewPdf() {
         firstPage.drawText(semester, { x: 100, y: height - 161, size: 14, font });
         firstPage.drawText(branch, { x: 230, y: height - 161, size: 14, font });
         firstPage.drawText(batch, { x: 330, y: height - 161, size: 14, font });
+        const checkboxes = document.querySelectorAll("input[name='absent[]']:checked");
+        
+        if (checkboxes.length === 0) {
+          alert("No absent periods selected. Select at least one period.");
+        } else {
+          const selected = Array.from(checkboxes).map(cb => cb.value);
+          const grouped = {};
+          selected.forEach(value => {
+              const parts = value.split(" - ");
+              if (parts.length >= 2) {
+                  const day = parts[0].trim();
+                  const periodStr = parts[1].trim();
+                  const periodMatch = periodStr.match(/\d+/);
+                  if (periodMatch) {
+                      const period = periodMatch[0];
+                      if (!grouped[day]) grouped[day] = [];
+                      grouped[day].push(period);
+                  }
+              }
+          });
+  
+          const alertLines = [];
+          for (const day in grouped) {                                            // 
+              const paddedDay = day.padEnd(4, ' ');                               //no idea
+              const periods = grouped[day].join(", ");                            //but it works
+              alertLines.push(`${paddedDay} ${month}             ${periods}`);
+          }
+            let ypos = height - 217;
+            const lineSpacing = 23; // line spacing
+            alertLines.forEach(line => {
+              firstPage.drawText(line, { x: 60, y: ypos, size: 12, font });
+              ypos -= lineSpacing;
+            });
+        }
 
         const pdfBytes = await pdfDoc.save();
         const blob = new Blob([pdfBytes], { type: 'application/pdf' }); 
