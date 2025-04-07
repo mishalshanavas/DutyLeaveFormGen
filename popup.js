@@ -118,7 +118,7 @@ document.getElementById("absentForm").addEventListener("submit", async (e) => {
     const month = document.getElementById('month').value.trim();
 
     if (checkboxes.length === 0) {
-        alert("No absent periods selected. Select at least one period.");
+        alert("No absent periods selected. Are you trying to apply for duty leave via telepathy? Select at least one period and try again!");
     } else {
         const selected = Array.from(checkboxes).map(cb => cb.value);
         const grouped = {};
