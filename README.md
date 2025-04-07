@@ -1,79 +1,57 @@
-# 📄 Duty Leave Form Generator Extension
+# 📄 Duty Leave Form Generator – Sahrdaya Edition
 
-A simple browser extension to generate and preview duty leave forms with student details and absent periods. Built using HTML, CSS, and JavaScript, this extension simplifies the process of filling and downloading duty leave forms as PDFs.
+A Chrome extension to generate and download duty leave forms for **Sahrdaya College of Engineering and Technology** students.
 
----
+## 🚀 Features
 
-## 📦 Installation
+- Fill in student and event details
+- Select semester, branch, batch, and month
+- Choose absent periods using an interactive table
+- Preview and download the form as a Sahrdaya-formatted PDF
+
+## 🔧 Installation
 
 ### Option 1: Clone the Repository (Recommended)
 
-1. Open your terminal and clone the repository:
-   ```bash
-   git clone https://github.com/mishalshanavas/DutyLeaveFormGen.git
-   ```
-2. Open the folder in **VS Code**:
-   ```bash
-   cd DutyLeaveFormGen
-   code .
-   ```
+```bash
+git clone https://github.com/mishalshanavas/DutyLeaveFormGen.git
+cd DutyLeaveFormGen
+```
 
 ### Option 2: Download as ZIP
 
-1. Go to the repository page: [DutyLeaveFormGen](https://github.com/mishalshanavas/DutyLeaveFormGen)
-2. Click on the green **"Code"** button and select **"Download ZIP"**
-3. Extract the ZIP file to a location of your choice
+- Go to: [DutyLeaveFormGen](https://github.com/mishalshanavas/DutyLeaveFormGen)
+- Click **Code > Download ZIP**
+- Extract the folder
 
+## 🌐 Load the Extension in Chrome
 
----
+1. Open Chrome and go to `chrome://extensions/`
+2. Enable **Developer Mode**
+3. Click **Load unpacked**
+4. Select the extracted/cloned `DutyLeaveFormGen` folder
 
-## 🌐 Load the Extension in Chrome(works in all browsers)
-
-1. Open Google Chrome
-2. Go to `chrome://extensions/`
-3. Enable **Developer Mode** (top right corner)
-4. Click **"Load unpacked"**
-5. Select the folder where your extension files are located (`DutyLeaveFormGen`)
-6. The extension should now appear in your extensions bar with the icon
-
----
-
-## 🧩 Features
-
-- Input student and event details
-- Dropdowns for semester, branch, batch, and month
-- Table for selecting absent periods
-- Generate a preview or download the form as a PDF
-
----
+## Option 3: Publishing zooon on chrome-store....
 
 ## 📁 Project Structure
 
-```bash
+```
 DutyLeaveFormGen/
 ├── popup.html          # Extension UI
-├── popup.js            # Logic for form handling and PDF
-├── manifest.json       # Chrome extension configuration
+├── popup.js            # Form logic and PDF generation
+├── manifest.json       # Extension manifest
 ├── icon.png            # Extension icon
-├── lib/
+├── lib/                # PDF libraries
 │   ├── pdf-lib.min.js
 │   └── fontkit.umd.min.js
-└── DutyLeaveForm.pdf   # Template PDF used for generation
+└── DutyLeaveForm.pdf   # Sahrdaya duty leave form template
 ```
 
----
+## 👥 Contributors
 
+- [@mishalshanavas](https://github.com/mishalshanavas)
+- [@shayen71421](https://github.com/shayen71421)
 
-
-## 🤝 Contributing
-
-Collaborators: [@mishalshanavas](https://github.com/mishalshanavas) and [@shayen71421](https://github.com/shayen71421) 
-
-Feel free to fork, submit PRs, or suggest improvements.
-
----
-
-## 📃 License
-
-This project is licensed under the MIT License.
+## 📄 License
+This project is licensed under the **MIT License**.
 
