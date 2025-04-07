@@ -32,14 +32,12 @@
     th {
       background-color: #e0e0e0;
     }
-    input[type="checkbox"] {
-      transform: scale(0.9);
-    }
-    input[type="text"] {
+    input[type="text"], select {
       width: 100%;
       margin-bottom: 5px;
       padding: 5px;
       box-sizing: border-box;
+      font-size: 0.9em;
     }
     button {
       margin-top: 8px;
@@ -86,10 +84,63 @@
     <input type="text" id="name" placeholder="Student Name" >
     <input type="text" id="rollNo" placeholder="Roll Number" >
     <input type="text" id="srNo" placeholder="SR Number" >
-    <input type="text" id="semester" placeholder="Semester" >
-    <input type="text" id="branch" placeholder="Branch" >
-    <input type="text" id="batch" placeholder="Batch" >
-    <input type="text" id="month" placeholder="Month (unable to Fetch)" >
+
+    
+    <label for="semester">Semester:</label>
+    <select id="semester" required>
+      <option value="">--Select Semester--</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select>
+
+    
+    <label for="branch">Branch:</label>
+    <select id="branch" required>
+      <option value="">--Select Branch--</option>
+      <option value="CSE">CSE</option>
+      <option value="EEE">EEE</option>
+      <option value="EC">EC</option>
+      <option value="BM">BM</option>
+      <option value="BT">BT</option>
+      <option value="CE">CE</option>
+    </select>
+
+    
+    <label for="batch">Batch:</label>
+    <select id="batch">
+      <option value="">--Select Batch--</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value=" "> </option>
+    </select>
+
+    
+    
+<label for="month">Month:</label>
+<select id="month" required>
+  <option value="">--Select Month--</option>
+  <option value="Jan">Jan</option>
+  <option value="Feb">Feb</option>
+  <option value="Mar">Mar</option>
+  <option value="Apr">Apr</option>
+  <option value="May">May</option>
+  <option value="Jun">Jun</option>
+  <option value="Jul">Jul</option>
+  <option value="Aug">Aug</option>
+  <option value="Sep">Sep</option>
+  <option value="Oct">Oct</option>
+  <option value="Nov">Nov</option>
+  <option value="Dec">Dec</option>
+</select>
+
 
     <h3>Absent Periods</h3>
     <table>
@@ -100,8 +151,8 @@
     
     <div class="btn-group">
       <button type="button" id="selectAll">Select All</button>
-      <button type="button" id="downloadPdfBtn">Preview PDF</button>
-      <button type="submit">Selected dta</button>
+      <button type="button" id="downloadPdfBtn">Download PDF</button>
+      <button type="submit">Selected data</button>
     </div>
     <div id="pdfPreviewArea"></div>
   </form>
