@@ -23,7 +23,7 @@ A simple browser extension to generate and preview duty leave forms with student
 1. Go to the repository page: [DutyLeaveFormGen](https://github.com/mishalshanavas/DutyLeaveFormGen)
 2. Click on the green **"Code"** button and select **"Download ZIP"**
 3. Extract the ZIP file to a location of your choice
-4. Open the extracted folder in **VS Code** or any editor
+
 
 ---
 
