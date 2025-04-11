@@ -7,6 +7,11 @@ function extractAttendance() {
     const table = document.querySelector("#itsthetable");
     if (!table) return [];
 
+    const rawName = document.querySelector(".text")?.textContent?.trim() || "";
+    const studentName = rawName.toLowerCase().split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+    
     const rows = table.querySelectorAll("tbody tr");
     const data = [];
 
@@ -39,7 +44,10 @@ function extractAttendance() {
         data.push({ day, periods });
     });
 
-    return data;
+    return {
+        studentName,
+        attendanceData: data
+    };
 }
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -59,9 +67,15 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 output.innerHTML = "<tr><td colspan='4'>Error fetching attendance data. <a href=\"https://sahrdaya.etlab.in/ktuacademics/student/attendance\">Go to etlab</a> </td></tr>";
                 return;
             }
-            
 
-            const data = results && results[0]?.result ? results[0].result : [];
+            const result = results && results[0]?.result;
+            const data = result?.attendanceData || [];
+            
+            // Auto-fill only the student name if available
+            if (result?.studentName) {
+                document.getElementById('name').value = result.studentName;
+            }
+
             output.innerHTML = "";
 
             if (data.length === 0) {

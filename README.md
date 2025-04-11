@@ -11,12 +11,11 @@ A Chrome extension to generate and download duty leave forms for **Sahrdaya Coll
 
 ## 🔧 Installation
 
-### Option 1: Clone the Repository (Recommended)
+### Option 1: Install from Chrome Web Store (Recommended)
 
-```bash
-git clone https://github.com/mishalshanavas/DutyLeaveFormGen.git
-cd DutyLeaveFormGen
-```
+- Visit the Chrome Web Store: [Duty Leave Form Generator](https://chromewebstore.google.com/detail/eocdlimiompkkofcmkmafkkklkhgcobj?utm_source=item-share-cb)
+- Click **Add to Chrome** to install the extension.
+
 
 ### Option 2: Download as ZIP
 
@@ -30,8 +29,6 @@ cd DutyLeaveFormGen
 2. Enable **Developer Mode**
 3. Click **Load unpacked**
 4. Select the extracted/cloned `DutyLeaveFormGen` folder
-
-## Option 3: Publishing zooon on chrome-store....
 
 ## 📁 Project Structure
 
