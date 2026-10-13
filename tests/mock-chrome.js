@@ -15,9 +15,9 @@ const syntheticSnapshot = () => {
   };
 };
 const storage = {
-  async get(key) { return { [key]: JSON.parse(sessionStorage.getItem(key) || 'null') }; },
+  async get(key) { if (key === null) return Object.fromEntries(Object.keys(sessionStorage).map(k => [k, JSON.parse(sessionStorage.getItem(k))])); return { [key]: JSON.parse(sessionStorage.getItem(key) || 'null') }; },
   async set(values) { for (const [key, value] of Object.entries(values)) sessionStorage.setItem(key, JSON.stringify(value)); },
-  async remove(key) { sessionStorage.removeItem(key); }
+  async remove(key) { for (const k of Array.isArray(key) ? key : [key]) sessionStorage.removeItem(k); }
 };
 window.chrome = {
   tabs: {

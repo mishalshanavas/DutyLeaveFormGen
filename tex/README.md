@@ -29,7 +29,7 @@ when using the fallback.
 
 Set the named commands near the top of the source (`EventName`,
 `StudentName`, `RollNumber`, `SRNumber`, `Semester`, `Branch`, `Batch`).
-Empty values retain the original dotted placeholders. Add entries at the
+Empty values retain dotted placeholders. Filled values continue with dots to the shared field boundary. Keep the generated `layout-fields.tex` beside the main source. Add entries at the
 marked location, for example:
 
 ```tex
@@ -38,8 +38,7 @@ marked location, for example:
 ```
 
 This first version intentionally preserves the original 18-row, one-page
-layout. It is not yet a flowing or paginated document generator. Long field
-values must be checked for fit; rows outside 1--18 produce a compilation
+layout. It is not yet a flowing or paginated document generator. Field widths and positions come from `../layout.json` (regenerate with `npm run layout`). Long values shrink to a minimum of 8pt, then produce an explicit error if still too wide; rows outside 1--18 produce a compilation
 error. Unicode coverage depends on the selected font: these Latin fonts do
 not provide Malayalam support. Dynamic input must be escaped for TeX
 (particularly backslashes, braces, `%`, `&`, `_`, `#`, and `$`).

@@ -1,0 +1,6 @@
+// Generated from layout.json. Run npm run layout after changes.
+(function(root) {
+  const fields = {"program":[40.5,116.645507,510],"name":[76,144.243164,200],"rollNo":[336,144.243164,51],"srNo":[436,144.243164,110],"semester":[99,168.041992,68],"branch":[226,168.041992,51],"batch":[329,168.041992,110]};
+  if (typeof module !== 'undefined' && module.exports) module.exports = fields;
+  else root.DutyLeaveLayout = fields;
+})(typeof globalThis !== 'undefined' ? globalThis : this);

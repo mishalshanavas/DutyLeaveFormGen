@@ -13,17 +13,18 @@ a new store release is published.
 2. Choose **Load unpacked** and select this project folder, or click **Reload**
    on the existing extension after updating its files.
 3. If Chrome asks for the updated permissions, review them. Access is limited
-   to `https://sahrdaya.etlab.in/*`, plus local session drafts and PDF downloads.
+   to `https://sahrdaya.etlab.in/*`, plus script injection, local session drafts/previews and PDF downloads.
 4. Sign in to Etlab. Open
    https://sahrdaya.etlab.in/ktuacademics/student/attendance and select the
    required month/year/semester before opening the extension.
 
-Chrome 110 or newer is required. No Node.js or TeX installation is needed to
+Chrome 112 or newer is required. No Node.js or TeX installation is needed to
 use the extension. Updating source files does not automatically reload an
 already loaded extension.
 
 ## Use
 
+- Use **Edit details** to unlock the autofilled name and SR number. **Use profile details** restores the verified values. Semester and attendance month remain tied to Etlab.
 - Name and SR number are read from
   https://sahrdaya.etlab.in/student/profile using the existing signed-in
   session. Only these two profile fields are extracted.
@@ -32,11 +33,11 @@ already loaded extension.
   registration number, entrance roll number and bank branch are not substitutes.
 - Semester, month and year come from the displayed attendance table. To
   change them, change the Etlab page and click **Refresh** in the extension.
-- Enter the program/event, select absent periods, then **Preview PDF** or
+- Enter the program/event, select absent periods, then **Open preview** or
   **Download PDF**. Empty required fields, no selection, changed attendance,
   and text that cannot fit legibly block export.
 - **Open preview** opens the generated PDF in a new tab directly. A preview
-  link also remains available. The popup does not embed a PDF plugin.
+  link also remains available. A dedicated extension tab owns the PDF, so closing the popup or reloading the preview does not invalidate it. Up to eight previews are retained for up to 24 hours in this browser session.
 - Each form holds 18 dates. Additional dates generate further forms with
   student details and signature areas repeated. Dates include their year.
 - Latin and Malayalam input are supported. Malayalam is shaped by the
@@ -47,7 +48,8 @@ already loaded extension.
   but not restarting Chrome or reloading/disabling the extension. Drafts
   are never restored across different students. Selected periods are restored
   only when the attendance table is unchanged.
-  **Forget draft** clears saved input and selections.
+  **Forget draft** clears saved input and selections, but not previews or downloaded files.
+- A failed refresh preserves the visible form and selections while disabling export. Retry Refresh after signing in or restoring connectivity. Export rechecks both profile identity and attendance; manually corrected fields do not change the verified account identity.
 
 ## PDF and LaTeX
 
@@ -59,7 +61,7 @@ The separately editable LaTeX replica is in `tex/duty-leave.tex`, with its
 compiled blank form in `output/pdf/duty-leave.pdf`. See `tex/README.md` for
 XeLaTeX/Tectonic instructions. **pdfLaTeX is not supported** by that source.
 The standalone TeX replica still has its original fixed 18-row layout; the
-extension's JavaScript PDF generator implements pagination and field fitting.
+extension's JavaScript PDF generator implements pagination. Both versions share field positions and widths from `layout.json`; run `npm run layout` after changes. TeX shrinks fields down to 8pt or rejects illegible overflow.
 
 ## Development and checks
 
@@ -96,3 +98,7 @@ artwork retain their own licenses/rights; see `THIRD_PARTY_NOTICES.md`.
 
 - [mishalshanavas](https://github.com/mishalshanavas)
 - [shayen71421](https://github.com/shayen71421)
+
+## Chrome Web Store package
+
+Run `npm run package` to build the runtime-only ZIP in `dist/`. It excludes tests, build tools, the Git repository and source PDFs. Version 1.3.0 includes a privacy page and correctly sized icons. Submission text, permission explanations and remaining publisher steps are in [store/SUBMISSION.md](store/SUBMISSION.md). A public policy URL, publisher access, artwork rights and a loaded-extension smoke test remain required before submission. The package has not been submitted or approved.

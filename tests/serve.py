@@ -4,14 +4,20 @@ import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import os
+from urllib.parse import urlsplit
+import binascii
 
 ROOT = Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
 
 class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/test-popup':
-            content = (ROOT / 'popup.html').read_text().replace('<head>',
+        route = urlsplit(self.path).path
+        if route.startswith(('/.git', '/node_modules', '/.env', '/store', '/scripts')):
+            self.send_error(404)
+            return
+        if route in ('/test-popup', '/preview.html'):
+            content = (ROOT / ('popup.html' if route == '/test-popup' else 'preview.html')).read_text().replace('<head>',
                 '<head><base href="/"><script src="tests/mock-chrome.js"></script>')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
@@ -33,7 +39,11 @@ class Handler(SimpleHTTPRequestHandler):
         if not data_url.startswith('data:application/pdf;base64,'):
             self.send_error(400)
             return
-        content = base64.b64decode(data_url.split(',', 1)[1], validate=True)
+        try:
+            content = base64.b64decode(data_url.split(',', 1)[1], validate=True)
+        except (ValueError, binascii.Error):
+            self.send_error(400)
+            return
         target = ROOT / 'tmp/pdfs/ui-test.pdf'
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(content)

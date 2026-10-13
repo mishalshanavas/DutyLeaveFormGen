@@ -73,14 +73,14 @@
           doc = new DOMParser().parseFromString(await response.text(), 'text/html');
         }
         result.profile = readProfile(doc);
-        if (!result.profile.name || !result.profile.srNo) {
-          throw new Error('Name or SR number was not found on the profile page. Enter missing details manually.');
-        }
-        if (result.attendance?.studentName &&
+        if (result.profile.name && result.attendance?.studentName &&
             clean(result.attendance.studentName).toLowerCase() !== clean(result.profile.name).toLowerCase()) {
           result.profile = {};
           result.attendance = null;
           throw new Error('The profile and attendance belong to different students. Reload Etlab before continuing.');
+        }
+        if (!result.profile.name || !result.profile.srNo) {
+          throw new Error('Name or SR number was not found on the profile page. Enter missing details manually.');
         }
       } catch (error) {
         result.profileError = error.message || 'Could not load your profile. Enter the details manually.';

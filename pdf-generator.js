@@ -1,4 +1,5 @@
 (function (root) {
+  const layout = typeof module !== 'undefined' && module.exports ? require('./layout.js') : root.DutyLeaveLayout;
   async function generatePdf({ fields, rows, assets, rasterizeText, PDFLib, fontkit }) {
     if (!rows.length) throw new Error('Select at least one absent period.');
     const doc = await PDFLib.PDFDocument.create();
@@ -6,7 +7,7 @@
     // Carlito's composite glyphs are lost by the bundled fontkit subsetter.
     // Embed complete fonts so headings render correctly in every PDF viewer.
     const font = await doc.embedFont(assets.regular);
-    const headingFont = await doc.embedFont(assets.heading);
+    const headingFont = await doc.embedFont(assets.bold);
     const boldFont = await doc.embedFont(assets.bold);
     const watermark = await doc.embedPng(assets.watermark);
     const latinCharacters = new Set(font.getCharacterSet());
@@ -24,8 +25,13 @@
     function text(page, value, x, top, size = 12, selectedFont = font) {
       page.drawText(value, { x, y: 792 - top, size, font: selectedFont, color: black });
     }
+    function dottedRemainder(page, x, top, width, occupied = 0, size = 12) {
+      const start = occupied > 0 ? occupied + 4 : 0;
+      const count = Math.floor((width - start) / font.widthOfTextAtSize('.', size));
+      if (count > 0) text(page, '.'.repeat(count), x + start, top, size);
+    }
     async function fitted(page, value, x, top, width, field, size = 12, minSize = 8) {
-      if (!value) return;
+      if (!value) { dottedRemainder(page, x, top, width, 0, size); return; }
       if (Array.from(value).some(char => !latinCharacters.has(char.codePointAt(0)))) {
         if (!rasterizeText) throw new Error('Unicode text rendering is unavailable.');
         const result = await rasterizeText(value, { width, size, minSize, field });
@@ -34,12 +40,14 @@
           x, y: 792 - top - result.belowBaseline,
           width: result.width, height: result.height
         });
+        dottedRemainder(page, x, top, width, result.width, size);
         return;
       }
       const naturalWidth = font.widthOfTextAtSize(value, size);
       const fittedSize = naturalWidth > width ? size * width / naturalWidth : size;
       if (fittedSize < minSize) throw new Error(`${field} is too long to fit legibly. Shorten it before exporting.`);
       text(page, value, x, top, fittedSize);
+      dottedRemainder(page, x, top, width, font.widthOfTextAtSize(value, fittedSize), size);
     }
     const boundaries = [205.5, 228.5, 251.5, 273.5, 296.5, 319.5, 342.5,
       364.5, 387.5, 410.5, 433.5, 455.5, 478.5, 501.5, 524.5, 546.5, 569.5, 592.5, 615.5];
@@ -55,19 +63,19 @@
       text(page, heading1, 64.890381, 53.502442, 15 * 482.219238 / headingFont.widthOfTextAtSize(heading1, 15), headingFont);
       text(page, heading2, 125.641067, 70.842284, 14 * 342.721686 / headingFont.widthOfTextAtSize(heading2, 14), headingFont);
       text(page, 'The following student has participated in a program under my supervision in connection with', 40.5, 95.947265);
-      await fitted(page, fields.program, 40.5, 116.645507, 510, 'Program / event');
+      await fitted(page, fields.program, ...layout.program, 'Program / event');
       text(page, 'Name:', 39.333984, 144.243164);
-      await fitted(page, fields.name, 76, 144.243164, 200, 'Student name');
+      await fitted(page, fields.name, ...layout.name, 'Student name');
       text(page, 'Roll No:', 288, 144.243164);
-      await fitted(page, fields.rollNo, 336, 144.243164, 51, 'Roll number');
+      await fitted(page, fields.rollNo, ...layout.rollNo, 'Roll number');
       text(page, 'SR No:', 396, 144.243164);
-      await fitted(page, fields.srNo, 436, 144.243164, 110, 'SR number');
+      await fitted(page, fields.srNo, ...layout.srNo, 'SR number');
       text(page, 'Semester:', 39.333984, 168.041992);
-      await fitted(page, fields.semester, 99, 168.041992, 68, 'Semester');
+      await fitted(page, fields.semester, ...layout.semester, 'Semester');
       text(page, 'Branch:', 180, 168.041992);
-      await fitted(page, fields.branch, 226, 168.041992, 51, 'Branch');
+      await fitted(page, fields.branch, ...layout.branch, 'Branch');
       text(page, 'Batch:', 288, 168.041992);
-      await fitted(page, fields.batch, 329, 168.041992, 110, 'Batch');
+      await fitted(page, fields.batch, ...layout.batch, 'Batch');
       for (const x of [36.5, 135.5, 435.5, 550.5]) line(page, x, 180, x, 615);
       line(page, 36, 180.5, 551, 180.5);
       for (const top of boundaries) line(page, 36, top, top === 205.5 || top === 615.5 ? 551 : 435, top);

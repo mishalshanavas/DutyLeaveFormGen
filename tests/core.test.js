@@ -156,3 +156,20 @@ test('manifest permissions are restricted and all popup assets exist', () => {
     assert.ok(fs.existsSync(el.getAttribute('src') || el.getAttribute('href')));
   }
 });
+
+// Even incomplete profiles must never bypass the account mismatch guard.
+test('partial profile belonging to another student is rejected', async () => {
+  const partial = '<table class="detail-view"><tr><th>Name</th><td>OTHER STUDENT</td></tr></table>';
+  const result = await reader(attendanceHtml(), { fetch: async () => ({ ok: true,
+    url: 'https://sahrdaya.etlab.in/student/profile', text: async () => partial }) })();
+  assert.match(result.profileError, /different students/);
+  assert.equal(result.attendance, null);
+  assert.equal(Object.keys(result.profile).length, 0);
+});
+
+test('vendored library hashes match recorded versions', () => {
+  const crypto = require('node:crypto');
+  for (const asset of JSON.parse(fs.readFileSync('lib/versions.json', 'utf8'))) {
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(`lib/${asset.file}`)).digest('hex'), asset.sha256);
+  }
+});

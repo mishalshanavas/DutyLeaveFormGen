@@ -1,20 +1,33 @@
 {
-   "action": {
-      "default_icon": {
-         "16": "icon.png"
-      },
-      "default_popup": "popup.html"
-   },
-   "description": "Select absent periods and export it in duty leave form format.",
-   "host_permissions": [ "https://sahrdaya.etlab.in/*" ],
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApb5cVjrVxrQaQ9OqjkYUoWCk7NiUCimcFkHA5M7/UGme2aaQ6Ynuo6COB4KgvHh6njh2YqXQ4aoOBpmz6ZwGnRroEUXJmPWexR/GM0yeLfoqSPvTHEaIjSVEp+qfjivrsri67Zl359CsgA0VsRZbDVhfFqO8ayg8nUclUL/zqHUypCzbE2pKS3wjicpZYFFQHay0DgD4aaI15rqlPf62IwApZBfNfGHXdGzmt3q+9KxFABOcIZCv6zuePuM8Bgj2cxSNfY+1CCseLN/02moAzacU2/BjbdPNbXxKO8hFq7ZM/U1deJ/7A4uLJzhRATLBLueU3vRgR6scAVhfByiGfwIDAQAB",
-   "manifest_version": 3,
-   "name": "Cook my DutyLeave",
-   "permissions": [ "activeTab", "scripting", "storage", "downloads" ],
-   "minimum_chrome_version": "110",
-   "content_security_policy": {
-      "extension_pages": "script-src 'self'; object-src 'self';"
-   },
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.2.0"
+  "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "description": "Create duty-leave PDFs from selected Sahrdaya Etlab absences. Profile autofill, editable details and local PDF preview.",
+  "host_permissions": [
+    "https://sahrdaya.etlab.in/*"
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApb5cVjrVxrQaQ9OqjkYUoWCk7NiUCimcFkHA5M7/UGme2aaQ6Ynuo6COB4KgvHh6njh2YqXQ4aoOBpmz6ZwGnRroEUXJmPWexR/GM0yeLfoqSPvTHEaIjSVEp+qfjivrsri67Zl359CsgA0VsRZbDVhfFqO8ayg8nUclUL/zqHUypCzbE2pKS3wjicpZYFFQHay0DgD4aaI15rqlPf62IwApZBfNfGHXdGzmt3q+9KxFABOcIZCv6zuePuM8Bgj2cxSNfY+1CCseLN/02moAzacU2/BjbdPNbXxKO8hFq7ZM/U1deJ/7A4uLJzhRATLBLueU3vRgR6scAVhfByiGfwIDAQAB",
+  "manifest_version": 3,
+  "name": "Cook my DutyLeave",
+  "permissions": [
+    "scripting",
+    "storage",
+    "downloads"
+  ],
+  "minimum_chrome_version": "112",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+  "version": "1.3.0",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
 }

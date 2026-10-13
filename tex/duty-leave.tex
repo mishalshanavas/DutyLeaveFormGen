@@ -32,7 +32,17 @@
 \newcommand{\At}[3]{\put(#1,\dimexpr792bp-#2bp\relax){\makebox[0pt][l]{#3}}}
 \newcommand{\Text}[3]{\At{#1}{#2}{{\fontsize{12bp}{14bp}\selectfont #3}}}
 \newcommand{\BoldText}[3]{\Text{#1}{#2}{\bfseries #3}}
-\newcommand{\Field}[2]{\if\relax\detokenize\expandafter{#1}\relax#2\else#1\fi}
+\newsavebox{\FieldBox}
+\newcommand{\Field}[2]{%
+  \sbox{\FieldBox}{#1}%
+  \ifdim\wd\FieldBox>#2bp
+    \ifdim\wd\FieldBox>\dimexpr#2bp*3/2\relax
+      \PackageError{duty-leave}{Field too long to fit legibly}{Shorten the field value.}%
+    \else\resizebox{#2bp}{!}{#1}\fi
+  \else
+    \makebox[#2bp][l]{#1\ifdim\wd\FieldBox>0pt\hspace{4bp}\fi\leaders\hbox{.}\hfill\kern0pt}%
+  \fi}
+\input{layout-fields.tex}
 % Rows 1--18 only. Extra dates require continuation pages (not implemented here).
 \newlength{\RowPosition}
 \newcommand{\AttendanceRow}[3]{%
@@ -50,13 +60,19 @@
   \At{64.890381}{53.502442}{\resizebox{482.219238bp}{!}{{\headingfont\fontsize{15bp}{18bp}\selectfont SAHRDAYA COLLEGE OF ENGINEERING AND TECHNOLOGY, KODAKARA-680684}}}
   \At{125.641067}{70.842284}{\resizebox{342.721686bp}{!}{{\headingfont\fontsize{14bp}{17bp}\selectfont REQUEST FOR REGULARIZATION OF STUDENT ATTENDANCE}}}
   \Text{40.5}{95.947265}{The following student has participated in a program under my supervision in connection with}
-  \Text{40.5}{116.645507}{\Field{\EventName}{………………………………………………………………………………………………………......}}
-  \Text{39.333984}{144.243164}{Name: \Field{\StudentName}{...........................................................}}
-  \Text{288}{144.243164}{Roll No: \Field{\RollNumber}{…….}}
-  \Text{396}{144.243164}{SR No: \Field{\SRNumber}{……………….....}}
-  \Text{39.333984}{168.041992}{Semester: \Field{\Semester}{..............}}
-  \Text{180}{168.041992}{Branch: \Field{\Branch}{………….}}
-  \Text{288}{168.041992}{Batch: \Field{\Batch}{………}}
+  \csname Fieldprogram\endcsname{\EventName}
+  \Text{39.333984}{144.243164}{Name:}
+  \csname Fieldname\endcsname{\StudentName}
+  \Text{288}{144.243164}{Roll No:}
+  \csname FieldrollNo\endcsname{\RollNumber}
+  \Text{396}{144.243164}{SR No:}
+  \csname FieldsrNo\endcsname{\SRNumber}
+  \Text{39.333984}{168.041992}{Semester:}
+  \csname Fieldsemester\endcsname{\Semester}
+  \Text{180}{168.041992}{Branch:}
+  \csname Fieldbranch\endcsname{\Branch}
+  \Text{288}{168.041992}{Batch:}
+  \csname Fieldbatch\endcsname{\Batch}
 
   % Native TeX vector rules, including the undivided signature column.
   \linethickness{1bp}

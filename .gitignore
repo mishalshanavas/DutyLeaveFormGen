@@ -8,3 +8,4 @@ node_modules/
 tex.zip
 # Chrome Web Store verification metadata is not source code.
 _metadata/
+dist/

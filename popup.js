@@ -8,6 +8,8 @@ let busy = false;
 let loading = false;
 const editedDuringLoad = new Set();
 let previewUrl = null;
+let identityEditable = false;
+let sourceVerified = false;
 let assetsPromise = null;
 let accountKey = '';
 const selectedEntries = () => {
@@ -16,18 +18,21 @@ const selectedEntries = () => {
 };
 function status(message, type = '') { $('status').textContent = message; $('status').className = type; }
 function controls() {
-  const enabled = !busy && Boolean(snapshot?.attendance?.periods.length);
+  const enabled = !busy && sourceVerified && Boolean(snapshot?.attendance?.periods.length);
   for (const id of ['previewPdfBtn', 'downloadPdfBtn', 'selectAll', 'clearSelection']) $(id).disabled = !enabled;
   $('refreshBtn').disabled = busy;
   $('forgetDraft').disabled = busy;
   for (const id of fieldIds) $(id).disabled = id === 'semester' || (busy && !loading);
   $('month').disabled = true;
+  for (const id of ['name', 'srNo']) $(id).readOnly = !identityEditable && Boolean(snapshot?.profile?.[id]);
+  $('editDetails').disabled = busy;
+  $('editDetails').textContent = identityEditable ? 'Use profile details' : 'Edit details';
+  $('editDetails').setAttribute('aria-pressed', String(identityEditable));
   document.querySelectorAll('input[name="absent[]"]').forEach(cb => { cb.disabled = busy; });
 }
 function invalidatePreview() {
   $('pdfPreviewArea').replaceChildren();
   $('pdfPreviewArea').hidden = true;
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = null;
 }
 function selectionChanged() {
@@ -80,8 +85,8 @@ async function readSource(includeProfile) {
   if (!results?.[0]?.result) throw new Error('Etlab could not be read. Reload the page and try again.');
   return results[0].result;
 }
-async function saveDraft() {
-  if (!snapshot || !accountKey || busy) return;
+async function saveDraft(force = false) {
+  if (!snapshot || !accountKey || (busy && !force)) return;
   const fields = Object.fromEntries(fieldIds.map(id => [id, $(id).value]));
   const draft = {
     accountKey, fields, profileBase: snapshot.profile,
@@ -96,8 +101,8 @@ function scheduleSave() {
 }
 async function refresh() {
   if (busy) return;
-  try { await saveDraft(); } catch { /* Current form remains editable if session storage fails. */ }
   busy = true; loading = true; editedDuringLoad.clear(); controls(); invalidatePreview();
+  try { await saveDraft(true); } catch { /* Keep the visible draft on storage failure. */ }
   status('Reading Etlab attendance and profile…');
   try {
     const [active] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -106,12 +111,15 @@ async function refresh() {
     }
     sourceTabId = active.id;
     const next = await readSource(true);
+    if (next.profileError || !next.profile.name || !next.profile.srNo) {
+      throw new Error(next.profileError || 'Profile identity could not be verified. Sign in and Refresh.');
+    }
     const nextKey = next.profile.name && next.profile.srNo ? `${next.profile.srNo}\u0000${next.profile.name}` : '';
     let draft;
     try { ({ dutyLeaveDraft: draft } = await chrome.storage.session.get('dutyLeaveDraft')); } catch { /* Optional draft restore. */ }
     // Preserve input typed during loading, but never carry a previous account's draft.
     for (const id of fieldIds) if (!editedDuringLoad.has(id)) $(id).value = '';
-    snapshot = next; accountKey = nextKey;
+    snapshot = next; accountKey = nextKey; sourceVerified = true; identityEditable = false;
     if (!editedDuringLoad.has('name')) $('name').value = next.profile.name || next.attendance?.studentName || '';
     if (!editedDuringLoad.has('srNo')) $('srNo').value = next.profile.srNo || '';
     renderAttendance();
@@ -119,6 +127,7 @@ async function refresh() {
       for (const id of ['program', 'rollNo', 'branch', 'batch']) if (!editedDuringLoad.has(id)) $(id).value = draft.fields?.[id] || '';
       if (draft.profileBase?.name === next.profile.name && draft.profileBase?.srNo === next.profile.srNo) {
         for (const id of ['name', 'srNo']) if (!editedDuringLoad.has(id)) $(id).value = draft.fields?.[id] || next.profile[id] || '';
+        identityEditable = ['name', 'srNo'].some(id => $(id).value !== next.profile[id]);
       }
       if (draft.fingerprint === DutyLeaveCore.fingerprint(next.attendance)) {
         const selected = new Set(draft.selected || []);
@@ -130,9 +139,8 @@ async function refresh() {
     else if (!next.attendance) status('Profile loaded. Open the attendance page, then reopen the extension.', 'warning');
     else status(`Profile loaded · ${next.attendance.periods.length} absent periods in ${DutyLeaveCore.MONTHS[next.attendance.month - 1]} ${next.attendance.year}.`);
   } catch (error) {
-    snapshot = null; sourceTabId = null; accountKey = '';
-    for (const id of fieldIds) if (!editedDuringLoad.has(id)) $(id).value = '';
-    renderAttendance();
+    sourceVerified = false;
+    if (!snapshot) renderAttendance();
     status(error.message || 'Could not read Etlab. Reload attendance and try again.', 'error');
   } finally {
     busy = false; loading = false; controls(); scheduleSave();
@@ -143,7 +151,6 @@ async function loadAssets() {
     assetsPromise = Promise.all([
       ['regular', 'fonts/LiberationSans-Regular.ttf'],
       ['bold', 'fonts/LiberationSans-Bold.ttf'],
-      ['heading', 'tex/assets/Carlito-Bold.ttf'],
       ['malayalam', 'fonts/NotoSansMalayalam.ttf'],
       ['watermark', 'tex/assets/watermark.png']
     ].map(async ([key, path]) => {
@@ -188,29 +195,35 @@ async function exportPdf(event) {
     const fields = Object.fromEntries(fieldIds.map(id => [id, $(id).value]));
     const validated = DutyLeaveCore.validate(fields, selectedEntries(), snapshot?.attendance);
     busy = true; controls(); status('Checking attendance and preparing the form…');
-    const current = await readSource(false);
+    if (!sourceVerified) throw new Error('Refresh and verify your profile before exporting.');
+    const current = await readSource(true);
+    if (current.profileError || !current.profile.name || !current.profile.srNo ||
+        `${current.profile.srNo}\u0000${current.profile.name}` !== accountKey) {
+      sourceVerified = false;
+      throw new Error('Your profile could not be verified or the signed-in student changed. Refresh before exporting.');
+    }
     if (DutyLeaveCore.fingerprint(current.attendance) !== DutyLeaveCore.fingerprint(snapshot.attendance)) {
       throw new Error('Attendance changed since it was loaded. Click Refresh and select the periods again.');
     }
     const bytes = await DutyLeavePdf.generatePdf({ ...validated, assets: await loadAssets(),
       rasterizeText, PDFLib, fontkit });
     invalidatePreview();
-    previewUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
-    const previewLink = document.createElement('a');
-    previewLink.href = previewUrl; previewLink.target = '_blank'; previewLink.rel = 'noopener';
-    previewLink.textContent = 'Open PDF preview in a new tab';
-    $('pdfPreviewArea').append(previewLink); $('pdfPreviewArea').hidden = false;
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader(); reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Could not prepare the PDF.'));
+      reader.readAsDataURL(new Blob([bytes], { type: 'application/pdf' }));
+    });
     if (event.submitter?.id === 'downloadPdfBtn') {
-      // A data URL keeps the download independent of the popup's lifetime.
-      const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader(); reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error('Could not prepare the PDF download.'));
-        reader.readAsDataURL(new Blob([bytes], { type: 'application/pdf' }));
-      });
       await chrome.downloads.download({ url: dataUrl, saveAs: true,
         filename: `duty-leave-${snapshot.attendance.year}-${String(snapshot.attendance.month).padStart(2, '0')}.pdf` });
-      status('PDF download started. Your preview is below.');
+      status('PDF download started.');
     } else {
+      await saveDraft(true);
+      previewUrl = await DutyLeavePreview.create(chrome, dataUrl);
+      const link = document.createElement('a');
+      link.href = previewUrl; link.target = '_blank'; link.rel = 'noopener';
+      link.textContent = 'Reopen PDF preview';
+      $('pdfPreviewArea').append(link); $('pdfPreviewArea').hidden = false;
       await chrome.tabs.create({ url: previewUrl });
       status(`Preview opened · ${validated.rows.length} dates · ${Math.ceil(validated.rows.length / 18)} pages.`);
     }
@@ -233,6 +246,14 @@ $('clearSelection').addEventListener('click', () => {
   document.querySelectorAll('input[name="absent[]"]').forEach(cb => { cb.checked = false; }); selectionChanged();
 });
 $('refreshBtn').addEventListener('click', refresh);
+$('editDetails').addEventListener('click', () => {
+  identityEditable = !identityEditable;
+  if (!identityEditable) {
+    for (const id of ['name', 'srNo']) $(id).value = snapshot?.profile?.[id] || '';
+  }
+  controls(); invalidatePreview(); scheduleSave();
+  if (identityEditable) $('name').focus();
+});
 $('forgetDraft').addEventListener('click', async () => {
   if (busy) return;
   busy = true; controls();

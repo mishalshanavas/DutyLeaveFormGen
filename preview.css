@@ -1,0 +1,3 @@
+body { margin: 0; font: 13px Arial, sans-serif; background: #f8f8f8; color: #333; }
+header { display: flex; gap: 16px; align-items: center; padding: 10px; border-bottom: 1px solid #ccc; }
+a { color: #444; } iframe { width: 100%; height: calc(100vh - 42px); border: 0; }
