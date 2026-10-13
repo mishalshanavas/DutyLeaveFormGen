@@ -1,0 +1,89 @@
+% Compile from tex/: tectonic duty-leave.tex --outdir ../output/pdf
+% Editable reconstruction. The original PDF is NOT used as a page background.
+\documentclass[12pt,letterpaper]{article}
+\usepackage[paperwidth=612bp,paperheight=792bp,margin=0bp]{geometry}
+\usepackage{fontspec,graphicx}
+% Prefer real Arial. For Overleaf, upload licensed arial.ttf and arialbd.ttf
+% into assets/. A bundled Arial-compatible fallback keeps other builds usable.
+\IfFontExistsTF{Arial}{\setmainfont{Arial}}{%
+  \IfFileExists{assets/arial.ttf}{%
+    \setmainfont[Path=assets/,BoldFont=arialbd.ttf]{arial.ttf}%
+  }{%
+    \PackageWarningNoLine{duty-leave}{Arial not installed; using Liberation Sans}%
+    \setmainfont[Path=../fonts/,BoldFont=LiberationSans-Bold.ttf]{LiberationSans-Regular.ttf}%
+  }%
+}
+\newcommand{\headingfont}{\bfseries}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\unitlength}{1bp}
+
+% Named fields: replace empty braces with TeX-escaped data.
+% This first replica preserves the original fixed, one-page form.
+\newcommand{\EventName}{}
+\newcommand{\StudentName}{}
+\newcommand{\RollNumber}{}
+\newcommand{\SRNumber}{}
+\newcommand{\Semester}{}
+\newcommand{\Branch}{}
+\newcommand{\Batch}{}
+
+% Coordinates use PDF points, measured from the upper-left corner.
+\newcommand{\At}[3]{\put(#1,\dimexpr792bp-#2bp\relax){\makebox[0pt][l]{#3}}}
+\newcommand{\Text}[3]{\At{#1}{#2}{{\fontsize{12bp}{14bp}\selectfont #3}}}
+\newcommand{\BoldText}[3]{\Text{#1}{#2}{\bfseries #3}}
+\newcommand{\Field}[2]{\if\relax\detokenize\expandafter{#1}\relax#2\else#1\fi}
+% Rows 1--18 only. Extra dates require continuation pages (not implemented here).
+\newlength{\RowPosition}
+\newcommand{\AttendanceRow}[3]{%
+  \ifnum#1<1 \PackageError{duty-leave}{Row must be 1--18}{}\fi
+  \ifnum#1>18 \PackageError{duty-leave}{Row must be 1--18}{}\fi
+  \setlength{\RowPosition}{\dimexpr221.013673bp+22.74902bp*\numexpr#1-1\relax\relax}%
+  \put(41.25,\dimexpr792bp-\RowPosition\relax){\makebox[0pt][l]{\fontsize{11bp}{13bp}\selectfont #2}}%
+  \put(141,\dimexpr792bp-\RowPosition\relax){\makebox[0pt][l]{\fontsize{11bp}{13bp}\selectfont #3}}}
+
+\begin{document}
+\noindent\begin{picture}(612,792)
+  % Original watermark artwork and its original 128/255 alpha.
+  \put(171,240.50985){\includegraphics[width=270bp,height=322.50019bp]{assets/watermark.png}}
+
+  \At{64.890381}{53.502442}{\resizebox{482.219238bp}{!}{{\headingfont\fontsize{15bp}{18bp}\selectfont SAHRDAYA COLLEGE OF ENGINEERING AND TECHNOLOGY, KODAKARA-680684}}}
+  \At{125.641067}{70.842284}{\resizebox{342.721686bp}{!}{{\headingfont\fontsize{14bp}{17bp}\selectfont REQUEST FOR REGULARIZATION OF STUDENT ATTENDANCE}}}
+  \Text{40.5}{95.947265}{The following student has participated in a program under my supervision in connection with}
+  \Text{40.5}{116.645507}{\Field{\EventName}{………………………………………………………………………………………………………......}}
+  \Text{39.333984}{144.243164}{Name: \Field{\StudentName}{...........................................................}}
+  \Text{288}{144.243164}{Roll No: \Field{\RollNumber}{…….}}
+  \Text{396}{144.243164}{SR No: \Field{\SRNumber}{……………….....}}
+  \Text{39.333984}{168.041992}{Semester: \Field{\Semester}{..............}}
+  \Text{180}{168.041992}{Branch: \Field{\Branch}{………….}}
+  \Text{288}{168.041992}{Batch: \Field{\Batch}{………}}
+
+  % Native TeX vector rules, including the undivided signature column.
+  \linethickness{1bp}
+  \put(36.5,177){\line(0,1){435}}
+  \put(135.5,177){\line(0,1){435}}
+  \put(435.5,177){\line(0,1){435}}
+  \put(550.5,177){\line(0,1){435}}
+  \put(36,611.5){\line(1,0){515}}
+  \put(36,586.5){\line(1,0){515}}
+  \put(36,176.5){\line(1,0){515}}
+  \multiput(36,563.5)(0,-23){2}{\line(1,0){399}}
+  \multiput(36,518.5)(0,-23){4}{\line(1,0){399}}
+  \multiput(36,427.5)(0,-23){4}{\line(1,0){399}}
+  \multiput(36,336.5)(0,-23){4}{\line(1,0){399}}
+  \multiput(36,245.5)(0,-23){3}{\line(1,0){399}}
+  \BoldText{41.25}{197.840819}{Date}
+  \BoldText{141}{197.840819}{Time}
+  \BoldText{440.25}{197.840819}{Signature}
+  % Example: \AttendanceRow{1}{07 Oct 2026}{1, 2, 3}
+
+  \Text{36}{639.709349}{Kindly grant attendance for the above time periods.}
+  \BoldText{36}{663.508179}{Issuing Faculty Name:}
+  \BoldText{360}{663.508179}{Signature with Date:}
+  \BoldText{52.072266}{691.105839}{- - - - - - - - - - - - - - - - - - - - - - - - - - For Office Use Only- - - - - - - - - - - - - - - - - - - - - - - - - -}
+  \BoldText{36}{718.703489}{Approved by Principal (Approved}
+  \BoldText{253.365232}{718.703489}{/}
+  \BoldText{273.369142}{718.703489}{Not Approved)}
+  \BoldText{36}{756.301149}{Signature with Date}
+\end{picture}
+\end{document}

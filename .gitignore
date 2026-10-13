@@ -1,0 +1,10 @@
+# Local PDF rendering and TeX build intermediates
+tmp/
+*.aux
+*.log
+*.out
+*.synctex.gz
+node_modules/
+tex.zip
+# Chrome Web Store verification metadata is not source code.
+_metadata/

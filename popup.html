@@ -1,168 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Duty Leave Helper</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 10px;
-      width: 300px;
-      max-height: 400px;
-      overflow-y: auto;
-      background-color: #f8f8f8;
-      color: #333;
-    }
-    h3 {
-      margin-bottom: 10px;
-      font-weight: normal;
-      font-size: 1em;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-    }
-    th, td {
-      padding: 5px;
-      border: 1px solid #ccc;
-      background-color: #fff;
-      font-size: 0.9em;
-    }
-    th {
-      background-color: #e0e0e0;
-    }
-    input[type="text"], select {
-      width: 100%;
-      margin-bottom: 5px;
-      padding: 5px;
-      box-sizing: border-box;
-      font-size: 0.9em;
-    }
-    button {
-      margin-top: 8px;
-      padding: 5px;
-      width: auto;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      color: #333;
-      font-size: 0.9em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #e0e0e0;
-    }
-    button:active {
-      background-color: #ccc;
-    }
-    .btn-group {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-    .btn-group button {
-      flex: 1;
-      margin: 0 2px;
-    }
-    #pdfPreviewArea {
-      margin-top: 12px;
-      padding: 5px;
-      background: #f0f0f0;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-  </style>
-
-  <script src="lib/pdf-lib.min.js"></script>
-  <script src="lib/fontkit.umd.min.js"></script>
+  <link rel="stylesheet" href="popup.css">
+  <script defer src="lib/pdf-lib.min.js"></script>
+  <script defer src="lib/fontkit.umd.min.js"></script>
+  <script defer src="etlab.js"></script>
+  <script defer src="form-core.js"></script>
+  <script defer src="pdf-generator.js"></script>
+  <script defer src="popup.js"></script>
 </head>
 <body>
-  <h3><strong>Duty Leave Application</strong></h3>
+  <header><h1>Duty Leave Application</h1><button type="button" id="refreshBtn">Refresh</button></header>
+  <p id="status" role="status" aria-live="polite">Reading Etlab attendance and profile…</p>
+  <p><a href="https://sahrdaya.etlab.in/ktuacademics/student/attendance" target="_blank" rel="noopener">Open attendance</a>
+    · <a href="https://sahrdaya.etlab.in/student/profile" target="_blank" rel="noopener">Open profile</a></p>
   <form id="absentForm">
-    <label for="program">Program/Event Name:</label>
-    <input type="text" id="program" placeholder="Program/Event Name">
-  
-    <label for="name">Student Name:</label>
-    <input type="text" id="name" placeholder="Student Name">
-  
-    <label for="rollNo">Roll Number:</label>
-    <input type="text" id="rollNo" placeholder="Roll Number">
-  
-    <label for="srNo">SR Number:</label>
-    <input type="text" id="srNo" placeholder="SR Number">
-
-    
-    <label for="semester">Semester:</label>
-    <select id="semester">
-      <option value="">--Select Semester--</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-    </select>
-
-    
-    <label for="branch">Branch:</label>
-    <select id="branch">
-      <option value="">--Select Branch--</option>
-      <option value="CSE">CSE</option>
-      <option value="EEE">EEE</option>
-      <option value="EC">EC</option>
-      <option value="BM">BM</option>
-      <option value="BT">BT</option>
-      <option value="CE">CE</option>
-    </select>
-
-    
-    <label for="batch">Batch:</label>
-    <select id="batch">
-      <option value="">--Select Batch--</option>
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-      <option value="D">D</option>
-      <option value=" "> </option>
-    </select>
-
-    
-    
-<label for="month">Month:</label>
-<select id="month" required>
-  <option value="">--Select Month--</option>
-  <option value="Jan">Jan</option>
-  <option value="Feb">Feb</option>
-  <option value="Mar">Mar</option>
-  <option value="Apr">Apr</option>
-  <option value="May">May</option>
-  <option value="Jun">Jun</option>
-  <option value="Jul">Jul</option>
-  <option value="Aug">Aug</option>
-  <option value="Sep">Sep</option>
-  <option value="Oct">Oct</option>
-  <option value="Nov">Nov</option>
-  <option value="Dec">Dec</option>
-</select>
-
-
-    <h3><strong>Absent Periods</strong></h3>
-    <table>
-      <tbody id="output">
-        <tr><td colspan="4">Loading...</td></tr>
-      </tbody>
-    </table>
-    
-    <div class="btn-group">
-      <button type="button" id="selectAll">Select All</button>
-      <button type="button" id="downloadPdfBtn">Download PDF</button>
-      <button type="submit">Selected data</button>
+    <label for="program">Program / event</label>
+    <input id="program" type="text" required maxlength="160" autocomplete="off">
+    <label for="name">Student name</label>
+    <input id="name" type="text" required maxlength="100" autocomplete="off">
+    <div class="two-columns">
+      <div><label for="rollNo">Class roll number</label><input id="rollNo" type="text" required maxlength="16" autocomplete="off"></div>
+      <div><label for="srNo">SR number</label><input id="srNo" type="text" required maxlength="24" autocomplete="off"></div>
     </div>
-    <div id="pdfPreviewArea"></div>
+    <div class="two-columns">
+      <div><label for="semester">Semester</label><select id="semester" disabled aria-describedby="sourceNote"><option value="">From Etlab</option></select></div>
+      <div><label for="month">Attendance month</label><select id="month" disabled aria-describedby="sourceNote"><option value="">From Etlab</option></select></div>
+    </div>
+    <p class="hint" id="sourceNote">Change month / semester in Etlab, then Refresh.</p>
+    <div class="two-columns">
+      <div><label for="branch">Branch</label><select id="branch" required><option value="">Select branch</option><option value="CSE">CSE</option><option value="EEE">EEE</option><option value="EC">EC</option><option value="BM">BM</option><option value="BT">BT</option><option value="CE">CE</option></select></div>
+      <div><label for="batch">Batch / division <span class="hint">(optional)</span></label><select id="batch"><option value="">None</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+    </div>
+    <datalist id="branches"><option value="CSE"><option value="EEE"><option value="EC"><option value="BM"><option value="BT"><option value="CE"></datalist>
+    <div class="section-heading"><h2>Absent periods</h2><span id="selectionCount">0 selected</span></div>
+    <div class="btn-group"><button type="button" id="selectAll">Select all</button><button type="button" id="clearSelection">Clear selection</button></div>
+    <div class="table-scroll"><table><thead><tr><th scope="col">Select</th><th scope="col">Date</th><th scope="col">Period</th><th scope="col">Subject</th></tr></thead>
+      <tbody id="output"><tr><td colspan="4">Loading…</td></tr></tbody></table></div>
+    <details class="hint help"><summary>Help</summary><p>Name and SR number load from your profile. Enter missing class details. Forms continue after 18 dates per page.</p></details>
+    <div class="btn-group export-actions"><button type="submit" id="previewPdfBtn" disabled>Open preview</button><button type="submit" id="downloadPdfBtn" disabled>Download PDF</button></div>
+    <div id="pdfPreviewArea" hidden></div>
   </form>
-  <script src="popup.js"></script>
+  <footer><span class="hint">Session draft</span><button type="button" id="forgetDraft">Forget draft</button></footer>
 </body>
 </html>

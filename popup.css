@@ -1,0 +1,26 @@
+@font-face { font-family: DutyLeaveSans; src: url("fonts/LiberationSans-Regular.ttf") format("truetype"); }
+@font-face { font-family: DutyLeaveMalayalam; src: url("fonts/NotoSansMalayalam.ttf") format("truetype"); }
+* { box-sizing: border-box; }
+body { font-family: DutyLeaveSans, DutyLeaveMalayalam, sans-serif; width: 320px; max-height: 400px; overflow-y: auto; margin: 0; padding: 10px; background: #f8f8f8; color: #333; font-size: 12px; }
+header, .section-heading, footer { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+h1, h2 { font-size: 13px; margin: 0; } h2 { margin: 8px 0; }
+a { color: #444; } p { margin: 5px 0; line-height: 1.35; }
+label { display: block; margin: 5px 0 3px; font-weight: normal; }
+input[type="text"], select { width: 100%; height: 26px; padding: 4px 5px; border: 1px solid #ccc; border-radius: 0; font: inherit; background: #fff; }
+input[readonly], select:disabled { background: #eee; color: #555; }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid #666; outline-offset: 1px; }
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.hint { color: #666; font-size: 10px; font-weight: normal; }
+button { cursor: pointer; border: 1px solid #ccc; border-radius: 0; background: #fff; color: #333; padding: 4px 6px; font: inherit; }
+button:hover { background: #e0e0e0; } button:disabled { cursor: default; opacity: .5; }
+.btn-group { display: flex; gap: 5px; margin: 5px 0; } .btn-group button { flex: 1; }
+#status { padding: 4px 0; margin: 3px 0; font-size: 11px; color: #555; }
+#status.error { color: #a11; } #status.warning { color: #775000; }
+.table-scroll { max-height: 160px; overflow: auto; border: 1px solid #ccc; }
+table { width: 100%; border-collapse: collapse; background: #fff; font-size: 11px; }
+th, td { text-align: left; padding: 4px; border: 1px solid #ccc; vertical-align: top; }
+th { position: sticky; top: 0; background: #e0e0e0; } td:last-child { overflow-wrap: anywhere; max-width: 120px; }
+#selectionCount { font-size: 10px; color: #666; } #pdfPreviewArea { margin-top: 6px; font-size: 11px; }
+.export-actions { position: sticky; bottom: 0; background: #f8f8f8; padding: 5px 0; margin-bottom: 0; }
+.help { margin: 5px 0; } .help summary { cursor: pointer; }
+footer { margin-top: 5px; } footer button { padding: 3px 5px; font-size: 10px; }

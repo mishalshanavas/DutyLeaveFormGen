@@ -1,0 +1,13 @@
+{
+  "name": "cook-my-dutyleave",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Local tests for the Sahrdaya duty-leave Chrome extension",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:ui": "python3 tests/serve.py"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.12"
+  }
+}
